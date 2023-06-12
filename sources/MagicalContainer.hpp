@@ -9,11 +9,11 @@ namespace ariel{
             class TopIterator{
                 protected:
                     unsigned int  index=0;
-                    vector <int> & iter_arr ;
+                    vector <int*> & iter_arr ;
                     MagicalContainer & temp_container;
                 public:
-                    TopIterator(vector <int>& arr, unsigned int index_up , MagicalContainer& cont) : iter_arr(arr) , index(index_up) , temp_container(cont){};
-                    TopIterator(MagicalContainer& cont ,vector<int>& container ) : temp_container(cont),
+                    TopIterator(vector <int*>& arr, unsigned int index_up , MagicalContainer& cont) : iter_arr(arr) , index(index_up) , temp_container(cont){};
+                    TopIterator(MagicalContainer& cont ,vector<int*>& container ) : temp_container(cont),
                     iter_arr(container){};
                     int& operator*();
                     bool operator==(const TopIterator& otherIter) const;
@@ -25,7 +25,7 @@ namespace ariel{
             };
             class AscendingIterator : public TopIterator{
               public:   
-                AscendingIterator(vector <int>& arr , unsigned int index , MagicalContainer& container):TopIterator(arr,index,container){}
+                AscendingIterator(vector <int*>& arr , unsigned int index , MagicalContainer& container):TopIterator(arr,index,container){}
                 AscendingIterator(MagicalContainer& container) : TopIterator(container , container.elements){};
                 AscendingIterator& operator++();
                 AscendingIterator operator++(int);
@@ -35,7 +35,7 @@ namespace ariel{
             };
             class PrimeIterator : public TopIterator{
              public:
-                PrimeIterator(vector <int>& arr , unsigned int index , MagicalContainer& container):TopIterator(arr,index,container){}
+                PrimeIterator(vector <int*>& arr , unsigned int index , MagicalContainer& container):TopIterator(arr,index,container){}
                 PrimeIterator(MagicalContainer& container) : TopIterator(container , container.prime){};
                 PrimeIterator& operator++();
                 PrimeIterator operator++(int);
@@ -45,7 +45,7 @@ namespace ariel{
             };
             class SideCrossIterator : public TopIterator{
              public:
-                SideCrossIterator(vector <int>& arr , unsigned int index ,MagicalContainer& container):TopIterator(arr,index,container){};
+                SideCrossIterator(vector <int*>& arr , unsigned int index ,MagicalContainer& container):TopIterator(arr,index,container){};
                 SideCrossIterator(MagicalContainer& container) : TopIterator(container, container.sideCross){};
                 SideCrossIterator& operator++();
                 SideCrossIterator operator++(int);
@@ -54,12 +54,20 @@ namespace ariel{
             };
             int size(){return this->elements.size();};
             void removeElement(int);
-            void sideCrossPattern(int num);
+            void sideCrossPattern(int* num);
             void addElement(int);
-            int getPosition(int,vector<int>);
+            int getPosition(int,vector<int*>);
+            static bool compareVal(const int * , const int * b);
             static bool checkPrime(int) ;
-            //~MagicalContainer();
+            ~MagicalContainer(){
+                //Only need to free SideCross , or any of the other vectors , since they all point
+                //To the same addresses of new int()
+                for (int* ptr : sideCross) {
+                    delete ptr;
+                }
+                sideCross.clear();
+            };
         private:
-            vector<int> elements ,arr , sideCross , prime;
+            vector<int*> elements ,arr , sideCross , prime;
     };
 }
